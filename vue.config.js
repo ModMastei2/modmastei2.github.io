@@ -1,3 +1,4 @@
 module.exports = {
-    publicPath: process.env.NODE_ENV === "production" ? "/REPO_NAME/" : "/",
+    productionSourceMap: false,
+	publicPath: '/util-page/'
 };
