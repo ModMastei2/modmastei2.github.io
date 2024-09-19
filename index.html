@@ -576,7 +576,7 @@ public class Unit2
             </div>
 
             <div class="ms-4">
-                <h6 class="sub-header">การสร้างสอบการเรียกใช้งาน (.Verify())</h6>
+                <h6 class="sub-header">การตรวจสอบการเรียกใช้งาน (.Verify())</h6>
 
                 <p>จาก Stub ด้านบน จะกลายเป็น Mock เมื่อมีการเพิ่มเมธอด <variable>Verify</variable>
                     เพื่อตรวจสอบการจำนวนครั้งในการทำงาน</p>
@@ -658,7 +658,7 @@ public class Calculator : ICalculator
 public class Unit4
 {
     [Fact]
-    public void Divide_Should_Fail_IfDividerIsZero()
+    public void Divide_Should_ThrowDivideByZeroException_IfDividerIsZero()
     {
         // Arrange
         var handler = new Calculator();
@@ -682,6 +682,15 @@ mock.Setup(service => service.Divide(It.IsAny<decimal>(), 0))
     .Throws&lt;DivideByZeroException&gt;();
                     </code>
                 </pre>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การทดสอบ Edge Case</h6>
+
+                <p>Edge Case เป็นกรณีที่เป็นที่สุดของขอบเขตการทำงาน เช่น การป้อนค่าที่มากเกินไป, น้อยเกินไป, ศูนย์ หรือ
+                    null ซึ่งแอปอาจทำงานผิดพลาดหากไม่ได้เตรียมรับมือไว้ก่อน</p>
+
+                มีการรับพารามิเตอร์เป็น <variable>Int</variable> จึงทำการใส่ค่าเป็น Int.MaxValue
             </div>
 
             <!-- extension-method -->
@@ -769,7 +778,37 @@ reportgenerator -reports:"&lt;path_to_report_file&gt;\coverage.cobertura.xml" -t
             <h4 id="best-practices" class="header">Best Practices ในการทำ Unit Test</h4>
 
             <div class="ms-4">
-                <h6 class="sub-header">การตั้งชื่อ Test Method อย่างมีความหมาย</h6>
+                <h6 class="sub-header">การตั้งชื่ออย่างมีความหมาย</h6>
+                <ul>
+                    <li>
+                        <p>การตั้งชื่อไฟล์หรือคลาส ควรนำเอาชื่อของไฟล์หรือคลาสที่จะทดสอบมาต่อด้วย Test เช่น <variable>
+                                UtilsServiceTest.cs</variable>
+                        </p>
+
+                    </li>
+                    <li>
+                        <p>การตั้งชื่อเมธอด เป็นอีกหนึ่งเรื่องที่สำคัญใน Unit Testing
+                            ช่วยให้เราเข้าใจสิ่งที่จะทดสอบได้ชัดเจนและง่ายขึ้นโดยไม่ต้องอ่านโค้ด วิธีการตั้งชื่อ
+                            ควรสะท้อนถึง
+                            เงื่อนไข, พฤติกรรม และผลลัพธ์ที่คาดหวัง </p>
+                        <!--                             
+                        <span style="color: red;">ชื่อเมธอดที่ต้องการทดสอบ</span>
+                        <span style="color: green;">ผลที่คาดหวัง</span>
+                        <span style="color: #09b8fd;">เงื่อนไข</span> -->
+
+                        <span class="fw-bold">
+
+                            <span style="color: red;">ชื่อเมธอดที่ต้องการทดสอบ</span> _Should_
+                            <span style="color: green;">ผลที่คาดหวัง</span> _If
+                            <span style="color: #09b8fd;">เงื่อนไข</span>
+                        </span> =>
+                        <span class="fw-bold">
+                            <span style="color: red;">Divide</span> _Should_
+                            <span style="color: green;">ThrowDivideByZeroException</span> _If
+                            <span style="color: #09b8fd;">DividerIsZero</span>()
+                        </span>
+                    </li>
+                </ul>
             </div>
 
             <div class="ms-4">
