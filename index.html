@@ -859,28 +859,31 @@ dotnet test --filter "Priority=High|OS=Windows"
                 <p>Unit test ที่ดีควบคู่ไปกับหลักการ F.I.R.S.T</p>
                 <ul>
                     <li>
-                        Fast <br> Unit test ควรจะรันได้อย่างรวดเร็ว ใช้เวลาน้อย สั่งรันเมื่อไหร่ก็ได้
+                        <span class="fw-bold">Fast</span> <br> Unit test ควรจะรันได้อย่างรวดเร็ว ใช้เวลาน้อย
+                        สั่งรันเมื่อไหร่ก็ได้
                     </li>
                     <li>
-                        Isolated / Independent <br> Unit test แต่ละตัวควรจะสามารถเซ็ทอัพข้อมูลในการทดสอบของตัวเองได้
+                        <span class="fw-bold">Isolated / Independent</span> <br> Unit test
+                        แต่ละตัวควรจะสามารถเซ็ทอัพข้อมูลในการทดสอบของตัวเองได้
                         ไม่ต้องพึ่งพาการทำงานของ Unit test ตัวอื่น
                     </li>
                     <li>
-                        Repeatable <br>ต้องรันซ้ำแล้วได้ผลเดิมเสมอ คาดเดาได้ ไม่ขึ้นกับสภาพแวดล้อม (environment)
+                        <span class="fw-bold">Repeatable</span> <br>ต้องรันซ้ำแล้วได้ผลเดิมเสมอ คาดเดาได้
+                        ไม่ขึ้นกับสภาพแวดล้อม (environment)
                     </li>
                     <li>
-                        Self-validating <br> ควรตรวจสอบผลลัพธ์ของตนเองได่โดยอัตโนมัติ
+                        <span class="fw-bold">Self-validating</span> <br> ควรตรวจสอบผลลัพธ์ของตนเองได่โดยอัตโนมัติ
                         การทดสอบควรเปรียบเทียบผลลัพธ์ที่คาดหวังกับผลลัพธ์ที่ได้
                     </li>
                     <li>
-                        Thorough / Timely <br> ควรเขียนในช่วงเวลาที่เกี่ยวข้องกับการพัฒนาฟีเจอร์หรือการแก้ไขบั๊ก
+                        <span class="fw-bold">Timely</span> <br>
+                        ควรเขียนในช่วงเวลาที่เกี่ยวข้องกับการพัฒนาฟีเจอร์หรือการแก้ไขบั๊ก
                         การเขียนทดสอบสอบควรทำควบคู่ไปกับการพัฒนาโค้ด และควรรัน Unit test อยู่เสมอ
                     </li>
                 </ul>
 
-                (<a class="fs-6"
-                href="https://gsus4new.medium.com/f-i-r-s-t-principle-of-unit-test-256ad65bc3cf"
-                target="_blank">อ้างอิง</a>)
+                (<a class="fs-6" href="https://gsus4new.medium.com/f-i-r-s-t-principle-of-unit-test-256ad65bc3cf"
+                    target="_blank">อ้างอิง</a>)
             </div>
         </section>
 
