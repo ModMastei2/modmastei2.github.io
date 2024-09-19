@@ -26,6 +26,13 @@
             font-weight: 300;
         }
 
+        footer {
+            background-color: #ec9941;
+            margin-top: 5em;
+            height: 2rem;
+            width: 100%;
+        }
+
         .header,
         .sub-header {
             position: relative;
@@ -814,14 +821,71 @@ reportgenerator -reports:"&lt;path_to_report_file&gt;\coverage.cobertura.xml" -t
             <div class="ms-4">
                 <!-- [Fact, Trait("Category", "MyCategory")] -->
                 <h6 class="sub-header">การแยก Unit Test ตามลักษณะของการทำงาน</h6>
+
+                <p>การแยกนั้น xUnit ได้เพิ่มแอตทริบิ้ว <variable>Trait</variable>
+                    เพื่อให้สามารถแบ่งการทดสอบออกเป็นหมวดหมู่ได้อย่างชัดเจนยิ่งขึ้น โดยที่ Category และ Value
+                    จะสามารถเป็นอะไรก็ได้</p>
+
+                <pre>
+                    <code class="language-csharp">
+[Trait(&lt;Category&gt;, &lt;Value&gt;)]
+                    
+// แบ่งตามความเสี่ยง
+// แบ่งตามความสำคัญ
+[Trait("Priority", "High")]
+[Trait("Priority", "Low")]
+
+// แบ่งตาม Environment
+[Trait("OS", "Development")]
+[Trait("OS", "Production")]
+
+// แบ่งตาม Operating System (OS)
+[Trait("OS", "Windows")]
+[Trait("OS", "Linux")]
+
+// คำสั่งเพื่อรันทดสอบ (มีการเพิ่ม Trait Filter พร้อมกันหลายๆ ตัว)
+// & (AND) ต้องตรงตามทุกเงื่อนไข
+dotnet test --filter "Priority=High&OS=Windows"
+// | (OR) ตรงตามอย่างใดอย่างหนึ่ง
+dotnet test --filter "Priority=High|OS=Windows"
+                    </code>
+                </pre>
             </div>
 
             <div class="ms-4">
                 <!-- https://gsus4new.medium.com/f-i-r-s-t-principle-of-unit-test-256ad65bc3cf -->
-                <h6 class="sub-header">หลักการ First (Fast, Independent, Repeatable, Self-validating, Timely)</h6>
+                <h6 class="sub-header">หลักการ F.I.R.S.T (Fast, Independent, Repeatable, Self-validating, Timely)</h6>
+
+                <p>Unit test ที่ดีควบคู่ไปกับหลักการ F.I.R.S.T</p>
+                <ul>
+                    <li>
+                        Fast <br> Unit test ควรจะรันได้อย่างรวดเร็ว ใช้เวลาน้อย สั่งรันเมื่อไหร่ก็ได้
+                    </li>
+                    <li>
+                        Isolated / Independent <br> Unit test แต่ละตัวควรจะสามารถเซ็ทอัพข้อมูลในการทดสอบของตัวเองได้
+                        ไม่ต้องพึ่งพาการทำงานของ Unit test ตัวอื่น
+                    </li>
+                    <li>
+                        Repeatable <br>ต้องรันซ้ำแล้วได้ผลเดิมเสมอ คาดเดาได้ ไม่ขึ้นกับสภาพแวดล้อม (environment)
+                    </li>
+                    <li>
+                        Self-validating <br> ควรตรวจสอบผลลัพธ์ของตนเองได่โดยอัตโนมัติ
+                        การทดสอบควรเปรียบเทียบผลลัพธ์ที่คาดหวังกับผลลัพธ์ที่ได้
+                    </li>
+                    <li>
+                        Thorough / Timely <br> ควรเขียนในช่วงเวลาที่เกี่ยวข้องกับการพัฒนาฟีเจอร์หรือการแก้ไขบั๊ก
+                        การเขียนทดสอบสอบควรทำควบคู่ไปกับการพัฒนาโค้ด และควรรัน Unit test อยู่เสมอ
+                    </li>
+                </ul>
+
+                (<a class="fs-6"
+                href="https://gsus4new.medium.com/f-i-r-s-t-principle-of-unit-test-256ad65bc3cf"
+                target="_blank">อ้างอิง</a>)
             </div>
         </section>
+
     </div>
+    <footer></footer>
 
     <script src="./assets/js/prism.js"></script>
 </body>
