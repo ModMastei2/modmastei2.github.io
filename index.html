@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xUnit v2.1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="./assets/css/prism.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Kanit", "Poppins", sans-serif;
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .header,
+        .sub-header {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 5px;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+
+        .header {
+            margin-bottom: 10px;
+        }
+
+        .sub-header {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .header::before,
+        .sub-header::before {
+            content: '#';
+            margin-right: 5px;
+            color: #ec9941;
+            /* สีของ # */
+            font-weight: bold;
+        }
+
+        .header::after,
+        .sub-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ec9941;
+            /* สีของเส้น */
+            transition: width 0.3s ease-in-out;
+        }
+
+        .header:hover::after,
+        .sub-header:hover::after {
+            width: 100%;
+            /* ให้เส้นขยายเต็ม */
+        }
+
+        pre[class*="language-"],
+        code[class*="language-"] {
+            background: #1e1e1e;
+            color: #98dbfe;
+            border-radius: 4px;
+        }
+
+        [class*="col"]>.code-toolbar>pre {
+            height: 100%;
+        }
+
+        [class*="col"]>.code-toolbar {
+            height: 98%;
+        }
+
+        /* Custom code token colors */
+        .token.comment {
+            color: #6a9955;
+        }
+
+        /* Green for comments */
+        .token.string {
+            color: #cb8d76;
+        }
+
+        /* Light orange for strings */
+        .token.keyword {
+            color: #4b9cc5;
+        }
+
+        /* Purple for keywords */
+        .token.function {
+            color: #dbd69d;
+        }
+
+        /* Yellow for functions */
+        .token.operator {
+            color: #d4d4d4;
+        }
+
+        /* White for operators */
+        .token.class-name {
+            color: #45c291;
+        }
+
+        variable {
+            background-color: #424242a4;
+            color: #fff;
+            border-radius: 4px;
+            padding: 0 0.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <section>
+            <h2 id="introduce">Introduce</h2>
+        </section>
+
+        <ul class="group-list list-unstyled">
+            <li><a href="#unit-testing">1. Unit Testing C#</a></li>
+            <li><a href="#unit-testing-csharp">2. เครื่องมือที่ใช้ในการทำ Unit Testing C#</a></li>
+            <li><a href="#installation">3. การติดตั้งและตั้งค่า xUnit และ Moq</a></li>
+            <li><a href="#basic-unit-testing">4. การเขียน Unit Test ด้วย xUnit</a></li>
+            <li><a href="#moq">5. การ Mock Dependencies ด้วย Moq</a></li>
+            <li><a href="#dependency-injection">6. การจัดการกับ Dependency Injection ใน Unit Test</a></li>
+            <li><a href="#internal-method">7. การทดสอบ Internal Methods</a></li>
+            <li><a href="#exception">8. การทดสอบ Exception และ Edge Cases</a></li>
+            <li><a href="#extension-nethod">9. การทดสอบ Extension Methods</a></li>
+            <li><a href="#code-coverage">10. การวัดความครอบคลุมของ Unit Test (Code Coverage)</a></li>
+            <li><a href="#continuous-integration">11. การประยุกต์ใช้ Unit Test ใน Continuous Integration (CI)</a></li>
+            <li><a href="#best-practices">12. Best Practices ในการทำ Unit Test</a></li>
+        </ul>
+        <br>
+
+        <section>
+            <!-- Unit Testing C# -->
+            <h4 id="unit-testing" class="header">Unit Testing C#</h4>
+
+            <p>&emsp;&emsp;Unit testing คือการทดสอบโปรแกรมหรือโค้ดในระดับหน่วยย่อย
+                เพื่อให้แน่ใจว่าส่วนหนึ่งของโค้ดสามารถทำงานได้ถูกต้องตามที่คาดหวัง โดยทั่วไปแล้ว
+                หน่วยย่อยของโค้ดอาจจะหมายถึงฟังก์ชัน เมธอด หรือคลาสในโปรแกรม</p>
+
+            <div class="ms-4">
+                <h6 id="unit-testing-purpose" class="sub-header">วัตถุประสงค์ของ Unit Testing คือ</h6>
+                <ol class="group-list group-list-numbered">
+                    <li>ตรวจสอบการทำงานของโค้ดในแต่ละส่วนย่อย</li>
+                    <li>ช่วยลดข้อผิดพลาดในโค้ด</li>
+                    <li>ช่วยสร้างความมั่นใจว่าโค้ดยังสามารถทำงานได้แม้ว่ามีการปรับปรุงแก้ไข (Enhance)</li>
+                    <li>ทำให้ได้ซอฟต์แวร์ที่มีคุณภาพ</li>
+                    <li>ทำให้เจอข้อผิดพลาดตั้งแต่เนิ่นๆ ทำให้แก้ไขได้เร็ว (ส่งผลให้ได้รับ Feedback ที่รวดเร็วเช่นกัน)
+                    </li>
+                </ol>
+            </div>
+            <br>
+
+            <!-- unit-testing-csharp -->
+            <h4 id="unit-testing-csharp" class="header">เครื่องมือที่ใช้ในการทำ Unit Testing C#</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">xUnit</h6>
+                <p>xUnit คือเฟรมเวิร์คสำหรับการทดสอบหน่วยย่อยที่ใช้กันอย่างแพร่หลายใน .NET Framework และ .NET Core
+                    ซึ่งถูกพัฒนาต่อมาจาก NUnit
+                    ถูกออกแบบมาให้เรียบง่ายโดยเน้นไปที่การลดความซับซ้อนและเพิ่มประสิทธิภาพใน
+                    <a href="">การทดสอบแบบขนาน</a>
+                </p>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">ความแตกต่างของ xUnit เมื่อเทียบกับ NUnit และ MSTest</h6>
+                <p>xUnit, NUnit และ MSTest ทั้ง 3 ตัวเป็นเฟรมเวิร์คที่ใช้ในการทำ Unit Testing ใน .NET
+                    มีความเหมือนกันในด้านของการทำงาน และมีแตกต่างกันในด้านของการออกแบบ ฟีเจอร์
+                    และแนวทางในการใช้งาน</p>
+
+
+                <div class="ms-4">
+                    <h6 id="unit-testing-difference" class="sub-header">การใช้งานและ Syntax</h6>
+
+                    <ul>
+                        <li>
+                            <p class="fw-bold">NUnit</p>
+                            <p>[SetUp], [Test], [TearDown], [TestCase(1, 2, ExpectedResult = 3)], [Category]</p>
+
+                            <pre>
+                                <code class="language-csharp">
+[SetUp]
+public void Setup() { }
+
+[Test]
+public void TestMethod() { }
+
+[TearDown]
+public void Cleanup() { }
+                                </code>
+                            </pre>
+                        </li>
+                        <li>
+                            <p class="fw-bold">xUnit</p>
+                            <p>xUnit จะไม่มีแอตทริบิวต์ [SetUp] หรือ [TearDown] แต่จะใช้ constructor หรือ IDisposable
+                                สำหรับการตั้งค่า / ล้างทิ้ง</p>
+                            <p>[Fact], [Theory], [InlineData(1, 2, n)], [Trait]</p>
+
+                            <div>
+                                <pre>
+                                    <code class="language-csharp">
+public class MyTestClass : IDisposable
+{
+    public MyTestClass() { /* SetUp */ }
+
+    [Fact]
+    public void TestMethod() { }
+
+    public void Dispose() { /* TearDown */ }
+}
+                                    </code>
+                                </pre>
+                            </div>
+                        </li>
+                        <li>
+                            <p class="fw-bold">MSTest</p>
+                            <p>[TestInitialize], [TestMethod], [TestCleanup], [DataTestMethod], [DataRow(1, 2, 3)],
+                                [TestCategory]</p>
+
+                            <div>
+                                <pre>
+                                    <code class="language-csharp">
+[TestInitialize]
+public void Setup() { }
+
+[TestMethod]
+public void TestMethod() { }
+
+[TestCleanup]
+public void Cleanup() { }
+                                    </code>
+                                </pre>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">Moq</h6>
+                <p>Moq เป็นเครื่องมือสำหรับการจำลองออปเจคในการทดสอบหน่วยย่อยของแอปที่พัฒนาด้วย .NET
+                    เพื่อสร้างและควบคุมพฤติกรรมของออปเจคโดยไม่ต้องพึ่งพาส่วนที่เป็นการทำงานจริง เช่น การใช้งานฐานข้อมูล
+                    หรือการเรียก API ภายนอก</p>
+
+                <div class="ms-4">
+                    <h6 id="moq-cons" class="sub-header">จุดเด่นของ Moq</h6>
+                    <ol class="group-list group-list-numbered">
+                        <li>ใช้งานง่าย</li>
+                        <li>รองรับการเขียนแบบ Lamda Expression</li>
+                        <li>ทำงานได้ดีกับการจำลอง Interface และ virtual method</li>
+                        <li>รองรับการจำลองแบบ Asynchronous</li>
+                        <li>มี Comunity ขนาดใหญ่</li>
+                        <li>มีการอัปเดตและพัฒนาฟีเจอร์อย่างต่อเนื่อง</li>
+                        <li>สามารถใช้ได้ทั้งกับ .NET Framework และ .NET Core</li>
+                    </ol>
+                </div>
+            </div>
+
+
+            <p>การทำ Unit Testing บน C# จะมีเฟรมเวิร์คต่างๆ มากมาย เช่น NUnit, xUnit และ MSTest
+                โดยในหัวข้อนี้เราจะยกตัวอย่างการใช้ xUnit</p>
+
+            <!-- installation -->
+            <h4 id="installation" class="header">การติดตั้งและตั้งค่า xUnit และ Moq</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การสร้างโปรเจค Unit Testing</h6>
+
+                <p>เราสามารถสร้างโปรเจคสำหรับทำ Unit Testing ได้ที่เทมเพลตของ Visual Studio วิธีการตามภาพด้านล่าง</p>
+
+                <img width="75%" src="./assets/images/xunit-create-01.png" class="rounded mx-auto d-block"><br>
+                <img width="75%" src="./assets/images/xunit-create-02.png" class="rounded mx-auto d-block">
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การติดตั้งผ่าน NuGet Package Manager</h6>
+
+                <p>และ Moq เราสามารถติดตั้งผ่าน NuGet</p>
+
+                <img width="75%" src="./assets/images/moq-dependency-01.png" class="rounded mx-auto d-block">
+            </div>
+
+            <!-- basic-unit-testing -->
+            <h4 id="basic-unit-testing" class="header">การเขียน Unit Test ด้วย xUnit</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">Unit Testing + AAA Principle</h6>
+                <p>หลักการ AAA (Arrange, Act, Assert) เป็นหลักการที่ช่วยให้การเขียนโค้ดมีความชัดเจนและเป็นระบบมากขึ้น
+                    โดยจะแยกออกเป็นขั้นตอน</p>
+
+                <ol class="group-list group-list-numbered">
+                    <li>
+                        <p>Arrange (เตรียมการ) <br> ขั้นตอนในการเตรียมการทดสอบ เช่นการจำลองออปเจค, ค่าเริ่มต้น
+                            รวมถึงตัวแปรตั้งๆ
+                            ที่จะใช้ทดสอบ</p>
+
+                    </li>
+                    <li>
+                        <p>Act (ลงมือ) <br> ขั้นตอนของการทดสอบ โดยขั้นตอนนี้จะเป็นการเรียกใช้โค้ดที่จะทดสอบ
+                            โดยอาจจะเรียกเป็นฟังก์ชั่นหรือเมธอดที่ต้องการตรวจสอบว่าทำงานได้ถูกต้องหรือไม่</p>
+                    </li>
+                    <li>
+                        <p>Assert (ตรวจสอบผลลัพธ์)
+                            <br>เราจะทำการตรวจสอบผลที่ได้จากขั้นตอนก่อนหน้าโดยนำมาเปรียบเทียบกับผลที่คาดหวัง
+                            เพื่อให้มั่นใจว่าโค้ดทำงานได้ถูกต้อง
+                        </p>
+                    </li>
+                </ol>
+
+                <pre>
+                    <code class="language-csharp">
+[Fact]
+public void Summary()
+{
+    // Arrange
+
+    // Act
+
+    // Assert
+}
+                    </code>
+                </pre>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การสร้าง Test Methods ด้วย Attribute Fact และ Theory</h6>
+
+                <p>ต่อไปเรามาลองสร้าง Test Case</p>
+
+                <p>Fact ใช้สำหรับการทดสอบที่ไม่ต้องการข้อมูลทดสอบหลายชุด เหมาะสำหรับการทดสอบที่มีผลลัพธ์เดียว</p>
+
+                <pre>
+                    <code class="language-csharp">
+private decimal Summary(decimal n1,  decimal n2) { return n1 + n2; }
+
+[Fact]
+public void Summary_Should_Correct()
+{
+    // Arrange
+    var n1 = 2;
+    var n2 = 3;
+    var expect = 5;
+
+    // Act
+    var result = Summary(n1, n2);
+
+    // Assert
+    Assert.Equal(expect, result);
+}
+                    </code>
+                </pre>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การใช้งาน Data-driven Testing กับ Theory และ InlineData</h6>
+
+                <pre>
+                    <code class="language-csharp">
+public class UnitTest1
+{
+    private decimal Summary(decimal n1,  decimal n2) { return n1 + n2; }
+
+    [Theory]
+    [InlineData(2, 3, 5)]
+    [InlineData(3, 9, 12)]
+    [InlineData(-2, -9, -11)]
+    public void Summary_Should_Correct(decimal n1, decimal n2, decimal expect)
+    {
+        // Arrange
+    
+        // Act
+        var result = Summary(n1, n2);
+    
+        // Assert
+        Assert.Equal(expect, result);
+    }
+}
+                    </code>
+                </pre>
+            </div>
+
+            <!-- moq -->
+            <!-- https://medium.com/kbtg-life/software-testing-series-test-double-patterns-7aae619ae8fe -->
+            <h4 id="moq" class="header">การ Mock Dependencies ด้วย Moq</h4>
+            <div class="ms-4">
+                <h6 class="sub-header">การจำลองการทำงานของ Interfaces หรือ Dependencies</h6>
+
+                <p>ก่อนอื่นเรามาทำความรู้จักกับ Test Double กันก่อน</p>
+                <p><span class="fw-bold">Test Double </span>
+                    หมายถึงออปเจคที่ถูกสร้างขึ้นเพื่อแทนที่การทำงานของออปเจคจริงในระหว่างการทดสอบ
+                    ใช้เพื่อจำลองหรือควบคุมพฤติกรรมในสภาพแวดล้อมของการทดสอบ โดย Test Double มีหลายประเภทที่นิยมใช้
+                    ได้แก่</p>
+
+                <ol class="group-list group-list-numbered">
+                    <li>
+                        <p>Dummy <br> เป็นออปเจคที่ถูกใช้เพื่อใส่เป็นพารามิเตอร์ของฟังก์ชั่นหรือคลาส
+                            เพื่อให้โค้ดทำงานต่อได้ แต่ไม่ได้ถูกใช้งาน</p>
+                    </li>
+                    <li>
+                        <p>Fake <br> เป็นออปเจคที่ทำงานได้จริง แต่มีการปรับเปลี่ยนการทำงานเช่น การเปลี่ยนไปใช้ In-Memory
+                            Database แทนการใช้ฐานข้อมูลจริง</p>
+                    </li>
+                    <li>
+                        <p>Stub <br> สร้างผลลัพธ์ที่แน่นอนโดยไม่สนใจว่าจะถูกเรียกใช้อย่างไร
+                            เป็นการคืนค่าเมธอดโดยไม่จำเป็นต้องคำนวณจริง
+                        </p>
+                    </li>
+                    <li>
+                        <p>Spy <br> จะมีความคล้ายกับ Stub แต่จะมีการตรวจสอบว่ามีการเรียกใช้กี่ครั้ง
+                            และมีการส่งค่าพารามิเตอร์อะไรบ้าง</p>
+                    </li>
+                    <li>
+                        <p>Mock <br> มีความคล้าย Spy แต่จะเพิ่มความสามารถในการตรวจสอบพฤติกรรมที่จำเป็น เช่น
+                            คาดหวังว่าเมธอดจะถูกเรียกกี่ครั้ง และสามารถตรวจสอบเงื่อนไขเหล่านั้นได้ในตอนจบ</p>
+                    </li>
+
+                    (<a class="fs-6"
+                        href="https://medium.com/kbtg-life/software-testing-series-test-double-patterns-7aae619ae8fe"
+                        target="_blank">อ้างอิง</a>)
+                </ol>
+
+                <p>หลังจากเรารู้จัก Test Double มาลองสร้าง Mock จาก Interface กัน
+                </p>
+
+                <p class="fw-bold">Final</p>
+
+                <pre class="line-numbers" data-line="40,43" data-line-offset="11" data-start="11">
+<code class="language-csharp">
+public interface IService
+{
+    decimal GetSomethingAfterTax(decimal r, decimal taxRate);
+}
+
+public class Service : IService
+{
+    private readonly IServiceProvider _serviceProvider;
+
+    public Service(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    public decimal GetSomethingAfterTax(decimal r, decimal taxRate)
+    {
+        return r * (1 - (taxRate / 100));
+    }
+}
+
+public class UnitTest1
+{
+    [Theory]
+    [InlineData(10000, 15, 8500)]
+    [InlineData(25000, 16, 21000)]
+    public void GetSomethingAfterTax_Should_Correct(decimal total, decimal taxRate, decimal expect)
+    {
+        // Arrange
+        var mock = new Mock&lt;IServiceProvider&gt;();
+
+        // Act
+        var handler = new Service(mock.Object);
+        var result = handler.GetSomethingAfterTax(total, taxRate);
+
+        // Assert
+        Assert.Equal(expect, result);
+    }
+}
+</code>
+                </pre>
+
+                <p>ซึ่งจากตัวอย่างด้านบน คือการสร้าง Test Double แบบ Dummy </p>
+            </div>
+
+
+
+            <div class="ms-4">
+                <h6 class="sub-header">การจำลองผลลัพธ์ของ Mock (.Setup() และ .Returns())</h6>
+
+                <div class="row">
+                    <div class="col-6">
+                        <p>ต่อจากด้านบน ถ้าจำเป็นต้องแยกวิธีการคำนวณอัตราภาษีไปไว้ที่อีกคลาสล่ะ</p>
+                        <pre class="line-numbers" data-start="4">
+<code class="language-csharp">
+public interface ITaxService
+{
+    decimal GetTaxRate(decimal taxRate);
+}
+
+// แยกการคำนวณอัตราภาษี
+public class TaxService
+{
+    public decimal GetTaxRate(decimal taxRate)
+    {
+        return (1 - (taxRate / 100));
+    }
+}
+</code>
+                        </pre>
+                    </div>
+
+                    <div class="col-6">
+                        <p>จากนั้นปรับ <variable>Service</variable> ของเรานิดหน่อย</p>
+
+                        <pre class="line-numbers" data-line="21,28,30,37" data-start="18" data-line-offset="18">
+<code class="language-csharp">
+public interface IService
+{
+    decimal GetSomethingAfterTax(decimal r, decimal taxRate);
+}
+
+public class Service : IService
+{
+    // ก่อนหน้าเราทำเหมือนว่ามี IServiceProvider เป็น Dependency
+    // แต่ตอนนนี้เราจะเปลี่ยนไปใช้ ITaxServcie แทน
+    private readonly ITaxService _taxService;
+
+    public Service(ITaxService taxService)
+    {
+        _taxService = taxService;
+    }
+
+    public decimal GetSomethingAfterTax(decimal r, decimal taxRate)
+    {
+        return r * _taxService.GetTaxRate(taxRate);
+    }
+}
+</code>
+                        </pre>
+                    </div>
+                </div>
+                <br>
+                <pre class="line-numbers" data-line="50-52" data-start="40" data-line-offset="40">
+<code class="language-csharp">
+public class Unit2
+{
+    [Theory]
+    [InlineData(10000, 15, 8500)]
+    [InlineData(25000, 16, 21000)]
+    public void Summary_Should_Correct(decimal total, decimal taxRate, decimal expect)
+    {
+        // Arrange
+        // และจากนั้นจึงเปลี่ยนไป Mock ITaxService แทน
+        var mock = new Mock&lt;ITaxService&gt;();
+        mock.Setup(x => x.GetTaxRate(It.IsAny&lt;decimal&gt;()))
+            .Returns(1 - (taxRate / 100));
+
+        // Act
+        var handler = new Service(mock.Object);
+        var result = handler.GetSomethingAfterTax(total, taxRate);
+
+        // Assert
+        Assert.Equal(expect, result);
+    }
+}
+</code>
+                </pre>
+                <p>จากตัวอย่างด้านบน คือการสร้าง Test Double แบบ Stub</p>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การสร้างสอบการเรียกใช้งาน (.Verify())</h6>
+
+                <p>จาก Stub ด้านบน จะกลายเป็น Mock เมื่อมีการเพิ่มเมธอด <variable>Verify</variable>
+                    เพื่อตรวจสอบการจำนวนครั้งในการทำงาน</p>
+
+                <pre class="line-numbers" data-line="61" data-start="42" data-line-offset="42">
+<code class="language-csharp">
+public class Unit2
+{
+    [Theory]
+    [InlineData(10000, 15, 8500)]
+    [InlineData(25000, 16, 21000)]
+    public void Summary_Should_Correct(decimal total, decimal taxRate, decimal expect)
+    {
+        // Arrange
+        // และจากนั้นจึงเปลี่ยนไป Mock ITaxService แทน
+        var mock = new Mock&lt;ITaxService&gt;();
+        mock.Setup(x => x.GetTaxRate(It.IsAny&lt;decimal&gt;()))
+            .Returns(1 - (taxRate / 100));
+
+        // Act
+        var handler = new Service(mock.Object);
+        var result = handler.GetSomethingAfterTax(total, taxRate);
+
+        // Assert
+        mock.Verify(x => x.GetTaxRate(It.IsAny&lt;decimal&gt;()), Times.Once);
+        Assert.Equal(expect, result);
+    }
+}
+</code>
+                </pre>
+            </div>
+
+            <!-- dependency-injection -->
+            <!-- <h4 id="dependency-injection" class="header">การจัดการกับ Dependency Injection ใน Unit Test</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การ Mock Dependency ที่ถูก Inject ผ่าน Constructor</h6>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การทดสอบการทำงานในกรณีที่ต้องใช้ external services</h6>
+            </div> -->
+
+            <!-- internal-method -->
+            <!-- <h4 id="internal-method" class="header">การทดสอบ Internal Methods</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การใช้ InternalVisibleTo สำหรับทดสอบ Method ภายในโปรเจค</h6>
+            </div> -->
+
+            <!-- exception -->
+            <h4 id="exception" class="header">การทดสอบ Exception และ Edge Cases</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การทดสอบการทำงานเมื่อเกิด Exception ด้วย xUnit</h6>
+
+                <p>ในการทดสอบการทำงานเมื่อเกิด Exception ขึ้นเราสามารถใช้ <variable>Assert.Throws&lt;T&gt;</variable>
+                    หรือ <variable>Assert.ThrowsAsync&lt;T&gt;</variable> ในการตรวจสอบว่าโค้ดจะโยน Exception
+                    ออกมาหรือไม่ และ Exception ที่โยนออกมาเป็นประเภทไหน</p>
+
+                <pre class="line-numbers" data-start="6">
+<code class="language-csharp">
+public interface ICalculator
+{
+    decimal Divide(decimal value, decimal divider);
+}
+// ฟังก์ชั่นที่จะโยน DivideByZeroException กรณีที่ตีวหารมีค่าเป็น 0
+public class Calculator : ICalculator
+{
+    public decimal Divide(decimal value, decimal divider)
+    {
+        if(divider == decimal.Zero)
+            throw new DivideByZeroException("Cannot divide by zero.");
+
+        return value / divider;
+    }
+}
+
+public class Unit4
+{
+    [Fact]
+    public void Divide_Should_Fail_IfDividerIsZero()
+    {
+        // Arrange
+        var handler = new Calculator();
+
+        // Act & Assert
+        Assert.Throws&lt;DivideByZeroException&gt;(() => handler.Divide(5, 0));
+    }
+}
+</code>
+                </pre>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การใช้ .Throws&lt;T&gt;() ใน Moq</h6>
+
+                <pre>
+                    <code class="language-csharp">
+// Arrange
+var mock = new Mock&lt;ICalculator&gt;();
+mock.Setup(service => service.Divide(It.IsAny<decimal>(), 0))
+    .Throws&lt;DivideByZeroException&gt;();
+                    </code>
+                </pre>
+            </div>
+
+            <!-- extension-method -->
+            <h4 id="extension-method" class="header">การทดสอบ Extension Methods</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การทดสอบ Extension Methods ด้วย xUnit และ Moq</h6>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การ Mock Extension Methods</h6>
+            </div>
+            <!-- code-coverage -->
+            <h4 id="code-coverage" class="header">การวัดความครอบคลุมของ Unit Test (Code Coverage)</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การใช้งานเครื่องมือวัด Code Coverage</h6>
+                <ol class="group-list group-list-numbered">
+                    <li>DataCollectors เป็นเครื่องมือที่ใช้เก็บรวบรวมข้อมูลจากการทดสอบ
+                        รายงานสามารถเก็บข้อมูลได้หลายรูปแบบ
+                        <br>
+                        <br>
+
+                        <div class="ms-4">
+                            <p>สามารถเรียกใช้ด้วยคำสั่ง</p>
+
+                            <pre>
+                                <code class="language-csharp">
+cd &lt;Project_Test_Name&gt; && dotnet test --collect:"XPlat Code Coverage"
+                                </code>
+                            </pre>
+
+                            <p>และเมื่อรันคำสั่งเสร็จแล้ว ไฟล์รายงานจะถูกสร้างขึ้นที่
+                                ..\TestResults\&lt;Guid&gt;\coverage.cobertura.xml</p>
+                            <p>จากนั้นจะใช้ Report Generators ในการสร้าง Dashboard สำหรับ Code Coverage</p>
+                        </div>
+                    </li>
+                    <li>Report Generators
+                        <br>
+                        <br>
+                        <div class="ms-4">
+                            <p>สามารถติดตั้งผ่าน Nuget Package หรือด้วยคำสั่ง</p>
+
+                            <pre>
+                                <code class="language-csharp">
+dotnet tool install -g dotnet-reportgenerator-globaltool
+                                </code>
+                            </pre>
+
+                            <p>จากนั้นใช้คำสั่งสร้าง Dashboard</p>
+
+                            <pre>
+                                <code class="language-csharp">
+reportgenerator -reports:"&lt;path_to_report_file&gt;\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+                                </code>
+                            </pre>
+
+                            <p>จากนั้นเราจะได้ Dashboard ที่มีผลรายงานของ Code Coverage</p>
+
+                            <img width="75%" class="rounded mx-auto d-block" src="./assets/images/dashboard-01.png">
+
+                            <br>
+                            <br>
+                            <p>โดย Dashboard นี้ นอกจากจะสามารถแสดงให้เห็นถึงความครอบคลุมในภาพใหญ่แล้ว
+                                เรายังสามารถดูได้อีกด้วยว่า ส่วนไหนภายในไฟล์ที่ถูก Covered / Uncovered</p>
+
+                            <img width="75%" class="rounded mx-auto d-block" src="./assets/images/line-covered.png">
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การปรับปรุงพัฒนาโค้ดด้วยการทำให้ Code Coverage สูงขึ้น</h6>
+            </div>
+
+            <!-- continuous-integration -->
+            <!-- <h4 id="continuous-integration" class="header">การประยุกต์ใช้ Unit Test ใน Continuous Integration (CI)</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การตั้งค่า Pipeline เพื่อรัน UnitTest อัตโนมัติใน CI/CD</h6>
+            </div> -->
+
+            <!-- best-practices -->
+            <h4 id="best-practices" class="header">Best Practices ในการทำ Unit Test</h4>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การตั้งชื่อ Test Method อย่างมีความหมาย</h6>
+            </div>
+
+            <div class="ms-4">
+                <!-- [Fact, Trait("Category", "MyCategory")] -->
+                <h6 class="sub-header">การแยก Unit Test ตามลักษณะของการทำงาน</h6>
+            </div>
+
+            <div class="ms-4">
+                <!-- https://gsus4new.medium.com/f-i-r-s-t-principle-of-unit-test-256ad65bc3cf -->
+                <h6 class="sub-header">หลักการ First (Fast, Independent, Repeatable, Self-validating, Timely)</h6>
+            </div>
+        </section>
+    </div>
+
+    <script src="./assets/js/prism.js"></script>
+</body>
+
+</html>
