@@ -130,6 +130,14 @@
             border-radius: 4px;
             padding: 0 0.2rem;
         }
+
+        answer {
+            background-color: #fff;
+            color: #fff;
+            border-radius: 4px;
+            border: 2px solid whitesmoke;
+            padding: 0 0.2rem;
+        }
     </style>
 </head>
 
@@ -145,13 +153,11 @@
             <li><a href="#installation">3. การติดตั้งและตั้งค่า xUnit และ Moq</a></li>
             <li><a href="#basic-unit-testing">4. การเขียน Unit Test ด้วย xUnit</a></li>
             <li><a href="#moq">5. การ Mock Dependencies ด้วย Moq</a></li>
-            <li><a href="#dependency-injection">6. การจัดการกับ Dependency Injection ใน Unit Test</a></li>
-            <li><a href="#internal-method">7. การทดสอบ Internal Methods</a></li>
-            <li><a href="#exception">8. การทดสอบ Exception และ Edge Cases</a></li>
-            <li><a href="#extension-nethod">9. การทดสอบ Extension Methods</a></li>
-            <li><a href="#code-coverage">10. การวัดความครอบคลุมของ Unit Test (Code Coverage)</a></li>
-            <li><a href="#continuous-integration">11. การประยุกต์ใช้ Unit Test ใน Continuous Integration (CI)</a></li>
-            <li><a href="#best-practices">12. Best Practices ในการทำ Unit Test</a></li>
+            <li><a href="#internal-method">6. การทดสอบ Internal Methods</a></li>
+            <li><a href="#exception">7. การทดสอบ Exception และ Edge Cases</a></li>
+            <li><a href="#extension-method">8. การทดสอบ Extension Methods</a></li>
+            <li><a href="#code-coverage">9. การวัดความครอบคลุมของ Unit Test (Code Coverage)</a></li>
+            <li><a href="#best-practices">10. Best Practices ในการทำ Unit Test</a></li>
         </ul>
         <br>
 
@@ -168,9 +174,9 @@
                 <ol class="group-list group-list-numbered">
                     <li>ตรวจสอบการทำงานของโค้ดในแต่ละส่วนย่อย</li>
                     <li>ช่วยลดข้อผิดพลาดในโค้ด</li>
-                    <li>ช่วยสร้างความมั่นใจว่าโค้ดยังสามารถทำงานได้แม้ว่ามีการปรับปรุงแก้ไข (Enhance)</li>
-                    <li>ทำให้ได้ซอฟต์แวร์ที่มีคุณภาพ</li>
-                    <li>ทำให้เจอข้อผิดพลาดตั้งแต่เนิ่นๆ ทำให้แก้ไขได้เร็ว (ส่งผลให้ได้รับ Feedback ที่รวดเร็วเช่นกัน)
+                    <li>ช่วยสร้างความมั่นใจว่าโค้ดยังสามารถทำงานได้หลังการปรับปรุงแก้ไข (Enhance)</li>
+                    <li>ทำให้ได้ซอฟต์แวร์มีคุณภาพมากขึ้น</li>
+                    <li>เจอข้อผิดพลาดตั้งแต่เนิ่นๆ ทำให้แก้ไขได้เร็ว (ส่งผลให้ได้รับ Feedback ที่รวดเร็วเช่นกัน)
                     </li>
                 </ol>
             </div>
@@ -275,7 +281,7 @@ public void Cleanup() { }
                         <li>รองรับการเขียนแบบ Lamda Expression</li>
                         <li>ทำงานได้ดีกับการจำลอง Interface และ virtual method</li>
                         <li>รองรับการจำลองแบบ Asynchronous</li>
-                        <li>มี Comunity ขนาดใหญ่</li>
+                        <li>มี Community ขนาดใหญ่</li>
                         <li>มีการอัปเดตและพัฒนาฟีเจอร์อย่างต่อเนื่อง</li>
                         <li>สามารถใช้ได้ทั้งกับ .NET Framework และ .NET Core</li>
                     </ol>
@@ -317,7 +323,7 @@ public void Cleanup() { }
                 <ol class="group-list group-list-numbered">
                     <li>
                         <p>Arrange (เตรียมการ) <br> ขั้นตอนในการเตรียมการทดสอบ เช่นการจำลองออปเจค, ค่าเริ่มต้น
-                            รวมถึงตัวแปรตั้งๆ
+                            รวมถึงตัวแปรต่างๆ
                             ที่จะใช้ทดสอบ</p>
 
                     </li>
@@ -493,7 +499,9 @@ public class UnitTest1
 </code>
                 </pre>
 
-                <p>ซึ่งจากตัวอย่างด้านบน คือการสร้าง Test Double แบบ Dummy </p>
+                <p>คำถามชวนคิด ออปเจคที่จำลองในข้อก่อนหน้า มีโครงสร้างตรงกับ Test Double แบบไหน <answer>แบบ Dummy
+                    </answer>
+                </p>
             </div>
 
 
@@ -567,7 +575,7 @@ public class Unit2
         // และจากนั้นจึงเปลี่ยนไป Mock ITaxService แทน
         var mock = new Mock&lt;ITaxService&gt;();
         mock.Setup(x => x.GetTaxRate(It.IsAny&lt;decimal&gt;()))
-            .Returns(1 - (taxRate / 100));
+            .Returns(1 - (taxRate / 100)); // 15:0.85 / 16:0.84
 
         // Act
         var handler = new Service(mock.Object);
@@ -579,7 +587,8 @@ public class Unit2
 }
 </code>
                 </pre>
-                <p>จากตัวอย่างด้านบน คือการสร้าง Test Double แบบ Stub</p>
+                <p>คำถาม ออปเจคก่อนหน้ามีโครงสร้างตรงกับ Test Double แบบไหน <answer>แบบ Stub</answer>
+                </p>
             </div>
 
             <div class="ms-4">
@@ -673,6 +682,18 @@ public class Unit4
         // Act & Assert
         Assert.Throws&lt;DivideByZeroException&gt;(() => handler.Divide(5, 0));
     }
+
+    [Fact]
+    public void Divide_Should_Fail_IfDividerIsZero()
+    {
+        // Arrange
+        var handler = new Calculator();
+
+        // Act & Assert
+        var result = Assert.Throws&lt;DivideByZeroException&gt;(() => handler.Divide(5, 0));
+
+        Assert.Equal("Cannot divide by zero.", result.Message);
+    }
 }
 </code>
                 </pre>
@@ -685,10 +706,12 @@ public class Unit4
                     <code class="language-csharp">
 // Arrange
 var mock = new Mock&lt;ICalculator&gt;();
-mock.Setup(service => service.Divide(It.IsAny<decimal>(), 0))
+mock.Setup(service => service.Divide(It.IsAny&lt;decimal&gt;(), 0))
     .Throws&lt;DivideByZeroException&gt;();
                     </code>
                 </pre>
+
+                คำถาม ตัวอย่างด้านบน มีโครงสร้างตรงกับ Test Double แบบไหน <answer>แบบ Spy</answer>
             </div>
 
             <div class="ms-4">
@@ -705,11 +728,153 @@ mock.Setup(service => service.Divide(It.IsAny<decimal>(), 0))
 
             <div class="ms-4">
                 <h6 class="sub-header">การทดสอบ Extension Methods ด้วย xUnit และ Moq</h6>
+
+                <p>การ Mock Extension Method มีข้อจำกัดอยู่ว่า ภายในต้องไม่มีการเรียกใช้ <variable>Static Method
+                    </variable> ยกตัวอย่างเช่น</p>
+
+                <pre class="line-numbers" data-line="8,17">
+<code class="language-csharp">
+public static Task&lt;List&lt;T&gt;&gt; CustomSqlQueryAsync&lt;T&gt;(this BTSContext context, string sql, object param) where T : class
+{
+    var sqlParams = param.ToSqlParamsList();
+    string fullSql = $"EXEC {sql}";
+    fullSql = $"{fullSql} {string.Join(", ", sqlParams.Select(s =&gt; $"@{s.ParameterName}"))}";
+
+    return context.SqlQueryAsync&lt;T&gt;(fullSql, sqlParams.ToArray&lt;object&gt;());
+}
+
+public static Task CustomExecuteNonQuery(this BTSContext context, string sql, object param)
+{
+    var sqlParams = param.ToSqlParamsList();
+    string fullSql = $"EXEC {sql}";
+    fullSql = $"{fullSql} {string.Join(", ", sqlParams.Select(s =&gt; $"@{s.ParameterName}"))}";
+
+    return context.Database.ExecuteSqlRawAsync(fullSql, sqlParams.ToArray&lt;object&gt;());
+}
+</code>
+                </pre>
+
+                <p>จะเห็นว่า Extension นี้มีปัญหาอยู่ตรงที่ บรรทัดที่ 8 และ 17 มีการเรียกใช้ Static Method
+                    ซึ่งเราสามารถแก้ไขได้ด้วยการปรับแก้โครงสร้างดังกล่าวด้วย Wrapper Class</p>
+
+                <p>เนื่องจาก ไม่ว่ายังไงก็หลีกเลี่ยงที่จะไม่ปรับโครงสร้างเพื่อลดความซ้ำซ้อนไม่ได้
+                    ดังนั้นเลยจะปรับโครงสร้างให้เป็นส่วนหนึ่งของ <variable>BTSContext</variable> ไปเลย</p>
+
+                <pre>
+<code class="language-csharp">
+public interface IBTSContextCustom
+{
+    Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(string sql, object param) where T : class;
+    Task ExecuteNonQuery(string sql, object param);
+}
+
+public partial class BTSContext
+{
+    private IBTSContextCustom _custom;
+    public virtual IBTSContextCustom Custom
+    {
+        get { return _custom; }
+        set { _custom = value; }
+    }
+}
+
+public partial class BTSContextCustom : IBTSContextCustom
+{
+    private readonly BTSContext _context;
+
+    public BTSContextCustom(BTSContext context)
+    {
+        _context = context;
+    }
+
+    public Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(string sql, object param) where T : class
+    {
+        return _context.CustomSqlQueryAsync&lt;T&gt;(sql, param);
+    }
+
+    public Task ExecuteNonQuery(string sql, object param)
+    {
+        return _context.CustomExecuteNonQuery(sql, param);
+    }
+}
+</code>
+                </pre>
+
+                <p>เวลาเรียกใช้ผ่าน Custom</p>
+
+                <pre>
+                    <code class="language-csharp">
+var orderInfo = (await _context.Custom.SqlQueryAsync<USP_GetRow_BTS_OrdersResult>(USPCommand.USP_GetRow_BTS_Orders, new { Order_No = requestParam.OrderNo })).Where(w => w.Wealth_Flag.ToBoolean()).FirstOrDefault();
+if (orderInfo == null)
+    throw new WealthException(APIWealthUpdateOrderResultCode.OrderNoNotFound);
+                    </code>
+                </pre>
+                <!-- <pre>
+<code class="language-csharp">
+public interface IDbContextExecutor
+{
+    Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(DbContext db, string sql, object[] parameters = null, CancellationToken cancellationToken = default) where T : class;
+    Task&lt;int&gt; ExecuteSqlRawAsync(BTSContext context, string sql, object[] parameters);
+}
+
+public class DbContextExecutor : IDbContextExecutor
+{
+    public async Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(DbContext db, string sql, object[] parameters = null, CancellationToken cancellationToken = default) where T : class
+    {
+        if (parameters is null)
+        {
+            parameters = new object[] { };
+        }
+
+        if (typeof(T).GetProperties().Any())
+        {
+            return await db.Set&lt;T&gt;().FromSqlRaw(sql, parameters).ToListAsync(cancellationToken);
+        }
+        else
+        {
+            await db.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
+            return default;
+        } 
+    }
+
+    public Task&lt;int&gt; ExecuteSqlRawAsync(BTSContext context, string sql, object[] parameters)
+    {
+        return context.Database.ExecuteSqlRawAsync(sql, parameters.ToArray&lt;object&gt;());
+    }
+}
+</code>
+                </pre>
+
+                <p>จากนั้นสร้าง Instance ของ DbContextExecutor ขึ้นมาที่ Extension Method ที่เรียกใช้ <variable>SqlQueryAsync</variable> <variable>ExecuteSqlRawAsync</variable></p>
+
+                <pre class="line-numbers" data-line="3,10,19">
+<code class="language-csharp">
+// สร้าง Instance ของ DbContextExecutor
+private static readonly IDbContextExecutor _executor = new DbContextExecutor();
+public static Task&lt;List&lt;T&gt;&gt; CustomSqlQueryAsync&lt;T&gt;(this BTSContext context, string sql, object param) where T : class
+{
+    var sqlParams = param.ToSqlParamsList();
+    string fullSql = $"EXEC {sql}";
+    fullSql = $"{fullSql} {string.Join(", ", sqlParams.Select(s =&gt; $"@{s.ParameterName}"))}";
+
+    return _executor.SqlQueryAsync&lt;T&gt;(context, fullSql, sqlParams.ToArray&lt;object&gt;());
+}
+
+public static Task CustomExecuteNonQuery(this BTSContext context, string sql, object param)
+{
+    var sqlParams = param.ToSqlParamsList();
+    string fullSql = $"EXEC {sql}";
+    fullSql = $"{fullSql} {string.Join(", ", sqlParams.Select(s =&gt; $"@{s.ParameterName}"))}";
+
+    return _executor.ExecuteSqlRawAsync(context,fullSql, sqlParams.ToArray&lt;object&gt;());
+}
+</code>
+                </pre> -->
             </div>
 
-            <div class="ms-4">
+            <!-- <div class="ms-4">
                 <h6 class="sub-header">การ Mock Extension Methods</h6>
-            </div>
+            </div> -->
             <!-- code-coverage -->
             <h4 id="code-coverage" class="header">การวัดความครอบคลุมของ Unit Test (Code Coverage)</h4>
 
@@ -872,7 +1037,7 @@ dotnet test --filter "Priority=High|OS=Windows"
                         ไม่ขึ้นกับสภาพแวดล้อม (environment)
                     </li>
                     <li>
-                        <span class="fw-bold">Self-validating</span> <br> ควรตรวจสอบผลลัพธ์ของตนเองได่โดยอัตโนมัติ
+                        <span class="fw-bold">Self-validating</span> <br> ควรตรวจสอบผลลัพธ์ของตนเองได้โดยอัตโนมัติ
                         การทดสอบควรเปรียบเทียบผลลัพธ์ที่คาดหวังกับผลลัพธ์ที่ได้
                     </li>
                     <li>
@@ -891,6 +1056,16 @@ dotnet test --filter "Priority=High|OS=Windows"
     <footer></footer>
 
     <script src="./assets/js/prism.js"></script>
+
+    <!-- <script>
+        document.querySelectorAll('code.language-csharp').forEach(function(cblock) {
+            let codeText = cblock.innerHTML
+
+            let replacedText = codeText.replace(/</g, '&lt;');
+
+            cblock.innerHTML.replacedText;
+        })
+    </script> -->
 </body>
 
 </html>
