@@ -891,7 +891,7 @@ public async Task Test()
                 </pre>
             </div>
 
-            <div class="ms4">
+            <div class="ms-4">
                 <h6 class="sub-header">การทดสอบ EF Core</h6>
 
                 <p>การ Mock EF Core นั้นจะแบ่งได้เป็นสองแบบ คือ แบบใช้ EF Core จริงๆ กับแบบที่ใช้ EF Core เรียก Store
@@ -902,8 +902,8 @@ public async Task Test()
 var featureInfo = (await _context.Procedures.USP_GetRow_BTS_FeaturesAsync(orderInfo.Feature_Id, today)).FirstOrDefault();
 
 // Mock Behavior + Result
-_BTSContext.Setup(x => x.Procedures.USP_GetRow_BTS_FeaturesAsync(It.IsAny<int>(), It.IsAny<DateTime>(), default, default))
-    .Returns(Task.FromResult(new List<USP_GetRow_BTS_FeaturesResult>()
+_BTSContext.Setup(x => x.Procedures.USP_GetRow_BTS_FeaturesAsync(It.IsAny&lt;int&gt;(), It.IsAny&lt;DateTime&gt;(), default, default))
+    .Returns(Task.FromResult(new List&lt;USP_GetRow_BTS_FeaturesResult&gt;()
     {
         new USP_GetRow_BTS_FeaturesResult()
         {
@@ -929,7 +929,7 @@ _BTSContext.Setup(x => x.Procedures.USP_GetRow_BTS_FeaturesAsync(It.IsAny<int>()
                     Instance Methods อาจจะต้องมีการพิจารณาที่จะต้อง Refactor ให้อยู่ในรูปของ Service</p>
 
 
-                    <pre>
+                <pre>
 <code class="language-csharp">
 // ทำให้เป็น Partial ของ BTSContext เพื่อที่จะได้ใช้งานแบบ _context.Custom
 public partial class BTSContext
@@ -941,12 +941,12 @@ public partial class BTSContext
         set { _custom = value; }
     }
 }
+///
 public interface IBTSContextCustom
 {
-    Task<List<T>> SqlQueryAsync<T>(string sql, object param) where T : class;
+    Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(string sql, object param) where T : class;
     Task ExecuteNonQuery(string sql, object param);
 }
-
 public partial class BTSContextCustom : IBTSContextCustom
 {
     private readonly BTSContext _context;
@@ -956,9 +956,9 @@ public partial class BTSContextCustom : IBTSContextCustom
         _context = context;
     }
 
-    public Task<List<T>> SqlQueryAsync<T>(string sql, object param) where T : class
+    public Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(string sql, object param) where T : class
     {
-        return _context.CustomSqlQueryAsync<T>(sql, param);
+        return _context.CustomSqlQueryAsync&lt;T&gt;(sql, param);
     }
 
     public Task ExecuteNonQuery(string sql, object param)
@@ -967,7 +967,7 @@ public partial class BTSContextCustom : IBTSContextCustom
     }
 }
 </code>
-                    </pre>
+                </pre>
                 <pre>
 <code class="language-csharp">
 var result = _mapper.AutoMapList&lt;InquiryOrderViewModel&gt;((
@@ -984,7 +984,32 @@ _BTSContext.Setup(x =&gt; x.Custom.SqlQueryAsync&lt;USP_Query_BTS_Orders_WealthR
     .Returns(Task.FromResult(new List&lt;USP_Query_BTS_Orders_WealthResult&gt;()));
 </code>
                 </pre>
+
+
             </div>
+
+            <div class="ms-4">
+                <h6 class="sub-header">การทดสอบ IConfiguration</h6>
+                <pre>
+<code class="language-csharp">
+// โค้ดที่เจอ
+_configuration.GetValue&lt;bool&gt;("AppSettings:InternalDisableSSLCheck")
+
+
+var inMemorySetting = new Dictionary&lt;string, string&gt;
+    {
+        { "AppSettings:InternalDisableSSLCheck", "true" }
+    };
+IConfiguration configuration = new ConfigurationBuilder()
+    .AddInMemoryCollection(inMemorySetting)
+    .Build();
+
+var handler = new ThaiBMACalculationService(..., configuration, ...);
+</code>
+                </pre>
+            </div>
+
+
             <!-- code-coverage -->
             <h4 id="code-coverage" class="header">การวัดความครอบคลุมของ Unit Test (Code Coverage)</h4>
 
@@ -1045,9 +1070,9 @@ reportgenerator -reports:"&lt;path_to_report_file&gt;\coverage.cobertura.xml" -t
                 </ol>
             </div>
 
-            <div class="ms-4">
+            <!-- <div class="ms-4">
                 <h6 class="sub-header">การปรับปรุงพัฒนาโค้ดด้วยการทำให้ Code Coverage สูงขึ้น</h6>
-            </div>
+            </div> -->
 
             <!-- continuous-integration -->
             <!-- <h4 id="continuous-integration" class="header">การประยุกต์ใช้ Unit Test ใน Continuous Integration (CI)</h4>
@@ -1083,7 +1108,7 @@ reportgenerator -reports:"&lt;path_to_report_file&gt;\coverage.cobertura.xml" -t
                             <span style="color: red;">ชื่อเมธอดที่ต้องการทดสอบ</span> _Should_
                             <span style="color: green;">ผลที่คาดหวัง</span> _If
                             <span style="color: #09b8fd;">เงื่อนไข</span>
-                        </span> =>
+                        </span> <br>
                         <span class="fw-bold">
                             <span style="color: red;">Divide</span> _Should_
                             <span style="color: green;">ThrowDivideByZeroException</span> _If
