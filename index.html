@@ -23,7 +23,7 @@
             box-sizing: border-box;
             font-family: "Kanit", "Poppins", sans-serif;
             font-size: 16px;
-            font-weight: 300;
+            font-weight: 400;
         }
 
         footer {
@@ -155,7 +155,7 @@
             <li><a href="#moq">5. การ Mock Dependencies ด้วย Moq</a></li>
             <li><a href="#internal-method">6. การทดสอบ Internal Methods</a></li>
             <li><a href="#exception">7. การทดสอบ Exception และ Edge Cases</a></li>
-            <li><a href="#extension-method">8. การทดสอบ Extension Methods</a></li>
+            <li><a href="#mock-example">8. การทดสอบในรูปแบบต่างๆ</a></li>
             <li><a href="#code-coverage">9. การวัดความครอบคลุมของ Unit Test (Code Coverage)</a></li>
             <li><a href="#best-practices">10. Best Practices ในการทำ Unit Test</a></li>
         </ul>
@@ -499,7 +499,7 @@ public class UnitTest1
 </code>
                 </pre>
 
-                <p>คำถามชวนคิด ออปเจคที่จำลองในข้อก่อนหน้า มีโครงสร้างตรงกับ Test Double แบบไหน <answer>แบบ Dummy
+                <p>คำถาม ออปเจคที่จำลองในข้อก่อนหน้า มีโครงสร้างตรงกับ Test Double แบบไหน <answer>แบบ Dummy
                     </answer>
                 </p>
             </div>
@@ -569,7 +569,7 @@ public class Unit2
     [Theory]
     [InlineData(10000, 15, 8500)]
     [InlineData(25000, 16, 21000)]
-    public void Summary_Should_Correct(decimal total, decimal taxRate, decimal expect)
+    public void GetSomethingAfterTax_Should_Correct(decimal total, decimal taxRate, decimal expect)
     {
         // Arrange
         // และจากนั้นจึงเปลี่ยนไป Mock ITaxService แทน
@@ -597,14 +597,14 @@ public class Unit2
                 <p>จาก Stub ด้านบน จะกลายเป็น Mock เมื่อมีการเพิ่มเมธอด <variable>Verify</variable>
                     เพื่อตรวจสอบการจำนวนครั้งในการทำงาน</p>
 
-                <pre class="line-numbers" data-line="61" data-start="42" data-line-offset="42">
+                <pre class="line-numbers" data-line="61" data-start="40" data-line-offset="40">
 <code class="language-csharp">
 public class Unit2
 {
     [Theory]
     [InlineData(10000, 15, 8500)]
     [InlineData(25000, 16, 21000)]
-    public void Summary_Should_Correct(decimal total, decimal taxRate, decimal expect)
+    public void GetSomethingAfterTax_Should_Correct(decimal total, decimal taxRate, decimal expect)
     {
         // Arrange
         // และจากนั้นจึงเปลี่ยนไป Mock ITaxService แทน
@@ -659,7 +659,7 @@ public interface ICalculator
 {
     decimal Divide(decimal value, decimal divider);
 }
-// ฟังก์ชั่นที่จะโยน DivideByZeroException กรณีที่ตีวหารมีค่าเป็น 0
+// ฟังก์ชั่นที่จะโยน DivideByZeroException กรณีที่ตัวหารมีค่าเป็น 0
 public class Calculator : ICalculator
 {
     public decimal Divide(decimal value, decimal divider)
@@ -723,51 +723,215 @@ mock.Setup(service => service.Divide(It.IsAny&lt;decimal&gt;(), 0))
                 มีการรับพารามิเตอร์เป็น <variable>Int</variable> จึงทำการใส่ค่าเป็น Int.MaxValue
             </div>
 
-            <!-- extension-method -->
-            <h4 id="extension-method" class="header">การทดสอบ Extension Methods</h4>
+            <!-- mock-example -->
+            <h4 id="mock-example" class="header">การทดสอบในรูปแบบต่างๆ</h4>
 
             <div class="ms-4">
-                <h6 class="sub-header">การทดสอบ Extension Methods ด้วย xUnit และ Moq</h6>
+                <h6 class="sub-header">การทดสอบ Extension Methods ด้วย xUnit</h6>
 
-                <p>การ Mock Extension Method มีข้อจำกัดอยู่ว่า ภายในต้องไม่มีการเรียกใช้ <variable>Static Method
-                    </variable> ยกตัวอย่างเช่น</p>
-
-                <pre class="line-numbers" data-line="8,17">
+                <p>การทดสอบ Extension Method สามารถทำได้โดยปกติ ยกตัวอย่างเช่น การแปลงเมตรเป็นกิโลเมตร
+                    สามารถเขียนได้ดังนี้</p>
+                <pre class="line-numbers">
 <code class="language-csharp">
-public static Task&lt;List&lt;T&gt;&gt; CustomSqlQueryAsync&lt;T&gt;(this BTSContext context, string sql, object param) where T : class
+public static class Extension
 {
-    var sqlParams = param.ToSqlParamsList();
-    string fullSql = $"EXEC {sql}";
-    fullSql = $"{fullSql} {string.Join(", ", sqlParams.Select(s =&gt; $"@{s.ParameterName}"))}";
-
-    return context.SqlQueryAsync&lt;T&gt;(fullSql, sqlParams.ToArray&lt;object&gt;());
+    public static double MeterToKilometers(this double meters)
+    {
+        return meters / 1000.0;
+    }
 }
-
-public static Task CustomExecuteNonQuery(this BTSContext context, string sql, object param)
+public class DistanceService
 {
-    var sqlParams = param.ToSqlParamsList();
-    string fullSql = $"EXEC {sql}";
-    fullSql = $"{fullSql} {string.Join(", ", sqlParams.Select(s =&gt; $"@{s.ParameterName}"))}";
+    public double GetKilometersDistance(double meters)
+    {
+        return meters.MeterToKilometers();
+    }
+}
+public class Unit6MoqExtension
+{
+    [Theory]
+    [InlineData(6400, 6.4)]
+    [InlineData(200, 0.2)]
+    [InlineData(10000000000, 10000000)]
+    public void GetKilometersDistance_Should_Correct(double meters, double expected)
+    {
+        // Arrange
+        var handler = new DistanceService();
 
-    return context.Database.ExecuteSqlRawAsync(fullSql, sqlParams.ToArray&lt;object&gt;());
+        // Act
+        var result = handler.GetKilometersDistance(meters);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
 }
 </code>
                 </pre>
 
-                <p>จะเห็นว่า Extension นี้มีปัญหาอยู่ตรงที่ บรรทัดที่ 8 และ 17 มีการเรียกใช้ Static Method
-                    ซึ่งเราสามารถแก้ไขได้ด้วยการปรับแก้โครงสร้างดังกล่าวด้วย Wrapper Class</p>
+                <p>แต่จะต่างออกไปหาก Extension Method มีการเรียกใช้ Dependency จากภายนอก เช่น <variable>HttpClient
+                    </variable> หรือ <variable>DbContext</variable>
+                </p>
+            </div>
 
-                <p>เนื่องจาก ไม่ว่ายังไงก็หลีกเลี่ยงที่จะไม่ปรับโครงสร้างเพื่อลดความซ้ำซ้อนไม่ได้
-                    ดังนั้นเลยจะปรับโครงสร้างให้เป็นส่วนหนึ่งของ <variable>BTSContext</variable> ไปเลย</p>
+            <div class="ms-4">
+                <h6 class="sub-header">การทดสอบ Http</h6>
+
+                <p>การสร้าง Mock ของ Http นั้น จะต้องปรับโครงสร้างพื้นฐานจากวิธีการใช้ HttpClient ปกติที่ new
+                    ภายใต้ <variable>scope using()</variable> ให้กลายเป็นการใช้แบบ <variable>HttpClientFactory
+                    </variable>
+                    </variable> แทน</p>
 
                 <pre>
 <code class="language-csharp">
-public interface IBTSContextCustom
+using(var client = new HttpClient())
 {
-    Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(string sql, object param) where T : class;
-    Task ExecuteNonQuery(string sql, object param);
+    /// implement
+}
+</code>
+                </pre>
+
+                <pre>
+<code class="language-csharp">
+public interface IHttpFactory
+{
+    HttpClient CreateHttpClient();
+    HttpClient CreateHttpClient(HttpRequestHandler handler, bool disposeHandler = true);
 }
 
+public class HttpFactory : IHttpFactory
+{
+    public HttpClient CreateHttpClient()
+    {
+        return new HttpClient();
+    }
+
+    public HttpClient CreateHttpClient(HttpRequestHandler handler, bool disposeHandler = true)
+    {
+        return new HttpClient(handler, disposeHandler);
+    }
+}
+</code>
+                </pre>
+
+                <p>จากนั้นก็นำ <variable>IHttpFactory</variable> ไปทำ Dependency ให้กับ Service ที่มีการใช้ <variable>
+                        HttpClient</variable>
+                </p>
+
+                <pre>
+<code class="language-csharp">
+public class ThaiBMACalculationService : IThaiBMACalculationService
+{
+    ...
+    private readonly IHttpFactory _factory;
+
+    ...
+
+    public ThaiBMACalculationService(... , IHttpFactory factory)
+    {
+        ...
+        _factory = factory;
+
+        ...
+    }
+}
+</code>
+                </pre>
+                <pre>
+<code class="language-csharp">
+// สร้าง HttpClient ผ่าน IHttpFactory เพื่อที่จะสามารถ Mockup ผลลัพธ์ของเส้น API ได้
+using (var client = _factory.CreateHttpClient(handler, false))
+{
+    // implement logic
+}
+</code>
+                </pre>
+
+                <p>จากโค้ดข้างต้นทำให้เราสามารถ Mock ผลลัพธ์ของ Http จาก Unit Testing ได้</p>
+
+                <pre class="line-numbers" data-line="6-11,24">
+<code class="language-csharp">
+[Fact]
+public async Task Test()
+{
+    // Arrange
+    CommonAPIModel model = new CommonAPIModel() {  };
+    var httpResponseMessage = new HttpResponseMessage()
+    {
+        StatusCode = System.Net.HttpStatusCode.OK,
+        Content = new StringContent(JsonConvert.SerializeObject(model))
+    };
+
+    /*
+    ... Hiding Mock Area
+    */
+
+    // Mock HttpMessageHandler
+    var mockMessageHandler = new Mock&lt;HttpMessageHandler&gt;();
+    mockMessageHandler.Protected()
+        .Setup&lt;Task&lt;HttpResponseMessage&gt;&gt;(
+            "SendAsync",
+            ItExpr.Is&lt;HttpRequestMessage&gt;(req =&gt; req.Method == HttpMethod.Post),
+            ItExpr.IsAny&lt;CancellationToken&gt;())
+        .ReturnsAsync(httpResponseMessage);
+
+    using var client = new HttpClient(mockMessageHandler.Object, false);
+
+    _httpFactory.Setup(x =&gt; x.CreateHttpClient(It.IsAny&lt;HttpRequestHandler&gt;(), false))
+        .Returns(client);
+
+    var handler = new ThaiBMACalculationService(_BTSContext.Object, configuration, _utils.Object, _appLogger.Object, _httpContextAccessor.Object, _mapper, _httpFactory.Object);
+
+    // Act
+    var result = await handler.BondCalculation(new BondCalculationParam());
+
+    // Assert
+    Assert.IsType&lt;BondCalculationViewModel&gt;(result);
+}
+</code>
+                </pre>
+            </div>
+
+            <div class="ms4">
+                <h6 class="sub-header">การทดสอบ EF Core</h6>
+
+                <p>การ Mock EF Core นั้นจะแบ่งได้เป็นสองแบบ คือ แบบใช้ EF Core จริงๆ กับแบบที่ใช้ EF Core เรียก Store
+                    Procedure </p>
+
+                <pre>
+<code class="language-csharp">
+var featureInfo = (await _context.Procedures.USP_GetRow_BTS_FeaturesAsync(orderInfo.Feature_Id, today)).FirstOrDefault();
+
+// Mock Behavior + Result
+_BTSContext.Setup(x => x.Procedures.USP_GetRow_BTS_FeaturesAsync(It.IsAny<int>(), It.IsAny<DateTime>(), default, default))
+    .Returns(Task.FromResult(new List<USP_GetRow_BTS_FeaturesResult>()
+    {
+        new USP_GetRow_BTS_FeaturesResult()
+        {
+            Feature_Id = 215,
+            Symbol = "BOT133A",
+            Name_Th = "พันธบัตรธนาคารแห่งประเทศไทยประเภทอัตราดอกเบี้ยลอยตัว รุ่นที่ 1/FRB3ปี/2553",
+            Name_Eng = null,
+            Issuer_Code = "BOT",
+            ...
+            Active_Flag = "1",
+            Par_Value = 1000.000000m,
+            Coupon = 3.032310m,
+            SDC_Ac_No = "0000000025",
+        }
+    }));
+</code>
+                </pre>
+                <p>หรือจะเป็นการ Mock การเรียก Store Procedure แบบที่ใช้ Extension <variable>CustomSqlQueryAsync
+                    </variable> <br>
+
+                    ก่อนอื่นต้องย้อนกลับไปตรงที่การ Mock Extension Method กันก่อน ว่ามันมีข้อจำกัดว่าสามารถทำได้
+                    โดยที่ห้ามมีการเรียก Static Method ด้านใน เนื่องจาก Static Method ไม่สามารถถูก Mock โดยตรงเหมือนกับ
+                    Instance Methods อาจจะต้องมีการพิจารณาที่จะต้อง Refactor ให้อยู่ในรูปของ Service</p>
+
+
+                    <pre>
+<code class="language-csharp">
+// ทำให้เป็น Partial ของ BTSContext เพื่อที่จะได้ใช้งานแบบ _context.Custom
 public partial class BTSContext
 {
     private IBTSContextCustom _custom;
@@ -776,6 +940,11 @@ public partial class BTSContext
         get { return _custom; }
         set { _custom = value; }
     }
+}
+public interface IBTSContextCustom
+{
+    Task<List<T>> SqlQueryAsync<T>(string sql, object param) where T : class;
+    Task ExecuteNonQuery(string sql, object param);
 }
 
 public partial class BTSContextCustom : IBTSContextCustom
@@ -787,9 +956,9 @@ public partial class BTSContextCustom : IBTSContextCustom
         _context = context;
     }
 
-    public Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(string sql, object param) where T : class
+    public Task<List<T>> SqlQueryAsync<T>(string sql, object param) where T : class
     {
-        return _context.CustomSqlQueryAsync&lt;T&gt;(sql, param);
+        return _context.CustomSqlQueryAsync<T>(sql, param);
     }
 
     public Task ExecuteNonQuery(string sql, object param)
@@ -798,83 +967,24 @@ public partial class BTSContextCustom : IBTSContextCustom
     }
 }
 </code>
-                </pre>
-
-                <p>เวลาเรียกใช้ผ่าน Custom</p>
-
+                    </pre>
                 <pre>
-                    <code class="language-csharp">
-var orderInfo = (await _context.Custom.SqlQueryAsync<USP_GetRow_BTS_OrdersResult>(USPCommand.USP_GetRow_BTS_Orders, new { Order_No = requestParam.OrderNo })).Where(w => w.Wealth_Flag.ToBoolean()).FirstOrDefault();
-if (orderInfo == null)
-    throw new WealthException(APIWealthUpdateOrderResultCode.OrderNoNotFound);
-                    </code>
-                </pre>
-                <!-- <pre>
 <code class="language-csharp">
-public interface IDbContextExecutor
-{
-    Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(DbContext db, string sql, object[] parameters = null, CancellationToken cancellationToken = default) where T : class;
-    Task&lt;int&gt; ExecuteSqlRawAsync(BTSContext context, string sql, object[] parameters);
-}
-
-public class DbContextExecutor : IDbContextExecutor
-{
-    public async Task&lt;List&lt;T&gt;&gt; SqlQueryAsync&lt;T&gt;(DbContext db, string sql, object[] parameters = null, CancellationToken cancellationToken = default) where T : class
+var result = _mapper.AutoMapList&lt;InquiryOrderViewModel&gt;((
+    await _context.Custom.SqlQueryAsync&lt;USP_Query_BTS_Orders_WealthResult&gt;(USPCommand.USP_Query_BTS_Orders_Wealth, new
     {
-        if (parameters is null)
-        {
-            parameters = new object[] { };
-        }
+        EM_Id = param.EMId,
+        StartDate = param.StartDate,
+        EndDate = param.EndDate,
+    })).AsQueryable());
 
-        if (typeof(T).GetProperties().Any())
-        {
-            return await db.Set&lt;T&gt;().FromSqlRaw(sql, parameters).ToListAsync(cancellationToken);
-        }
-        else
-        {
-            await db.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
-            return default;
-        } 
-    }
 
-    public Task&lt;int&gt; ExecuteSqlRawAsync(BTSContext context, string sql, object[] parameters)
-    {
-        return context.Database.ExecuteSqlRawAsync(sql, parameters.ToArray&lt;object&gt;());
-    }
-}
+// Only Mock Behavior
+_BTSContext.Setup(x =&gt; x.Custom.SqlQueryAsync&lt;USP_Query_BTS_Orders_WealthResult&gt;(It.IsAny&lt;string&gt;(), It.IsAny&lt;object&gt;()))
+    .Returns(Task.FromResult(new List&lt;USP_Query_BTS_Orders_WealthResult&gt;()));
 </code>
                 </pre>
-
-                <p>จากนั้นสร้าง Instance ของ DbContextExecutor ขึ้นมาที่ Extension Method ที่เรียกใช้ <variable>SqlQueryAsync</variable> <variable>ExecuteSqlRawAsync</variable></p>
-
-                <pre class="line-numbers" data-line="3,10,19">
-<code class="language-csharp">
-// สร้าง Instance ของ DbContextExecutor
-private static readonly IDbContextExecutor _executor = new DbContextExecutor();
-public static Task&lt;List&lt;T&gt;&gt; CustomSqlQueryAsync&lt;T&gt;(this BTSContext context, string sql, object param) where T : class
-{
-    var sqlParams = param.ToSqlParamsList();
-    string fullSql = $"EXEC {sql}";
-    fullSql = $"{fullSql} {string.Join(", ", sqlParams.Select(s =&gt; $"@{s.ParameterName}"))}";
-
-    return _executor.SqlQueryAsync&lt;T&gt;(context, fullSql, sqlParams.ToArray&lt;object&gt;());
-}
-
-public static Task CustomExecuteNonQuery(this BTSContext context, string sql, object param)
-{
-    var sqlParams = param.ToSqlParamsList();
-    string fullSql = $"EXEC {sql}";
-    fullSql = $"{fullSql} {string.Join(", ", sqlParams.Select(s =&gt; $"@{s.ParameterName}"))}";
-
-    return _executor.ExecuteSqlRawAsync(context,fullSql, sqlParams.ToArray&lt;object&gt;());
-}
-</code>
-                </pre> -->
             </div>
-
-            <!-- <div class="ms-4">
-                <h6 class="sub-header">การ Mock Extension Methods</h6>
-            </div> -->
             <!-- code-coverage -->
             <h4 id="code-coverage" class="header">การวัดความครอบคลุมของ Unit Test (Code Coverage)</h4>
 
