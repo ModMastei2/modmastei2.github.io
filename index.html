@@ -26,12 +26,13 @@
             font-weight: 400;
         }
 
-        header{
+        header {
             background-color: #ec9941;
             height: 2rem;
             width: 100%;
             margin-bottom: 2em;
         }
+
         footer {
             background-color: #ec9941;
             margin-top: 5em;
@@ -197,8 +198,7 @@
                 <h6 class="sub-header">xUnit</h6>
                 <p>xUnit คือเฟรมเวิร์คสำหรับการทดสอบหน่วยย่อยที่ใช้กันอย่างแพร่หลายใน .NET Framework และ .NET Core
                     ซึ่งถูกพัฒนาต่อมาจาก NUnit
-                    ถูกออกแบบมาให้เรียบง่ายโดยเน้นไปที่การลดความซับซ้อนและเพิ่มประสิทธิภาพใน
-                    <a href="">การทดสอบแบบขนาน</a>
+                    ถูกออกแบบมาให้เรียบง่ายโดยเน้นไปที่การลดความซับซ้อนและเพิ่มประสิทธิภาพในการทดสอบแบบขนาน
                 </p>
             </div>
 
@@ -1088,15 +1088,19 @@ reportgenerator -reports:"&lt;path_to_report_file&gt;\coverage.cobertura.xml" -t
             <div class="ms-4">
                 <h6 class="sub-header">การตั้งค่า Pipeline เพื่อรัน UnitTest อัตโนมัติใน CI/CD</h6>
 
-                <p>โดยปัจจุบันทาง Bitbucket ได้มีช่องทางในการสร้าง Pipeline ให้เราสามารถตรวจสอบโค้ดได้ ทันทีที่มีการ push หรือ pull request</p>
+                <p>โดยปัจจุบันทาง Bitbucket ได้มีช่องทางในการสร้าง Pipeline ให้เราสามารถตรวจสอบโค้ดได้ ทันทีที่มีการ
+                    push หรือ pull request</p>
 
-                <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/1.page.png"> <br>
-                <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/2.select.png"><br>
-                <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/3.create.png"><br>
+                <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/1.page.png">
+                <br>
+                <img width="75%" class="rounded mx-auto d-block"
+                    src="./assets/images/bitbucket-pipeline/2.select.png"><br>
+                <img width="75%" class="rounded mx-auto d-block"
+                    src="./assets/images/bitbucket-pipeline/3.create.png"><br>
                 <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/4.run.png">
             </div>
 
-            
+
 
             <!-- best-practices -->
             <h4 id="best-practices" class="header">Best Practices ในการทำ Unit Test</h4>
