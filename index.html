@@ -38,6 +38,15 @@
             margin-top: 5em;
             height: 2rem;
             width: 100%;
+            font-weight: 500;
+            position: relative;
+        }
+
+        footer>.update{
+            position: absolute;
+            right: 1rem;
+            /* line-height: 1rem;
+            vertical-align: auto; */
         }
 
         .header,
@@ -1209,19 +1218,13 @@ dotnet test --filter "Priority=High|OS=Windows"
         </section>
 
     </div>
-    <footer></footer>
+    <footer>
+        <div class="update">
+            Last update : 02-Oct-2024
+        </div>
+    </footer>
 
     <script src="./assets/js/prism.js"></script>
-
-    <!-- <script>
-        document.querySelectorAll('code.language-csharp').forEach(function(cblock) {
-            let codeText = cblock.innerHTML
-
-            let replacedText = codeText.replace(/</g, '&lt;');
-
-            cblock.innerHTML.replacedText;
-        })
-    </script> -->
 </body>
 
 </html>
