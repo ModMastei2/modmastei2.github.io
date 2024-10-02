@@ -26,6 +26,12 @@
             font-weight: 400;
         }
 
+        header{
+            background-color: #ec9941;
+            height: 2rem;
+            width: 100%;
+            margin-bottom: 2em;
+        }
         footer {
             background-color: #ec9941;
             margin-top: 5em;
@@ -142,6 +148,7 @@
 </head>
 
 <body>
+    <header></header>
     <div class="container">
         <section>
             <h2 id="introduce">Introduce</h2>
@@ -1075,11 +1082,20 @@ reportgenerator -reports:"&lt;path_to_report_file&gt;\coverage.cobertura.xml" -t
             </div> -->
 
             <!-- continuous-integration -->
-            <!-- <h4 id="continuous-integration" class="header">การประยุกต์ใช้ Unit Test ใน Continuous Integration (CI)</h4>
+            <h4 id="continuous-integration" class="header">การประยุกต์ใช้ Unit Test ใน Continuous Integration (CI)</h4>
 
             <div class="ms-4">
                 <h6 class="sub-header">การตั้งค่า Pipeline เพื่อรัน UnitTest อัตโนมัติใน CI/CD</h6>
-            </div> -->
+
+                <p>โดยปัจจุบันทาง Butbucet ได้มีช่องทางในการสร้าง Pipeline ให้เราสามารถตรวจสอบโค้ดได้ ทันทีที่มีการ push หรือ pull request</p>
+
+                <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/1.page.png"> <br>
+                <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/2.select.png"><br>
+                <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/3.create.png"><br>
+                <img width="75%" class="rounded mx-auto d-block" src="./assets/images/bitbucket-pipeline/4.run.png">
+            </div>
+
+            
 
             <!-- best-practices -->
             <h4 id="best-practices" class="header">Best Practices ในการทำ Unit Test</h4>
