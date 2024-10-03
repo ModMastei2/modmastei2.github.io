@@ -581,7 +581,7 @@ public class Service : IService
                     </div>
                 </div>
                 <br>
-                <pre class="line-numbers" data-line="50-52" data-start="40" data-line-offset="40">
+                <pre class="line-numbers" data-line="52-54" data-start="42" data-line-offset="42">
 <code class="language-csharp">
 public class Unit2
 {
@@ -616,9 +616,9 @@ public class Unit2
                 <p>จาก Stub ด้านบน จะกลายเป็น Mock เมื่อมีการเพิ่มเมธอด <variable>Verify</variable>
                     เพื่อตรวจสอบการจำนวนครั้งในการทำงาน</p>
 
-                <pre class="line-numbers" data-line="61" data-start="40" data-line-offset="40">
+                <pre class="line-numbers" data-line="59" data-start="40" data-line-offset="40">
 <code class="language-csharp">
-public class Unit2
+public class Unit3
 {
     [Theory]
     [InlineData(10000, 15, 8500)]
@@ -740,6 +740,20 @@ mock.Setup(service => service.Divide(It.IsAny&lt;decimal&gt;(), 0))
                     null ซึ่งแอปอาจทำงานผิดพลาดหากไม่ได้เตรียมรับมือไว้ก่อน</p>
 
                 มีการรับพารามิเตอร์เป็น <variable>Int</variable> จึงทำการใส่ค่าเป็น Int.MaxValue
+
+                <pre>
+<code class="language-csharp">
+public void LoopInt(int initialLoop)
+{
+    for (int i = initialLoop; i &lt; (initialLoop + 10); i++)
+    {
+        // implement something
+    }
+}
+
+LoopInt(Int.MaxValue);
+</code>
+                </pre>
             </div>
 
             <!-- mock-example -->
@@ -796,7 +810,7 @@ public class Unit6MoqExtension
                 <h6 class="sub-header">การทดสอบ Http</h6>
 
                 <p>การสร้าง Mock ของ Http นั้น จะต้องปรับโครงสร้างพื้นฐานจากวิธีการใช้ HttpClient ปกติที่ new
-                    ภายใต้ <variable>scope using()</variable> ให้กลายเป็นการใช้แบบ <variable>HttpClientFactory
+                    ภายใต้ <variable>scope using()</variable> ให้กลายเป็นการใช้แบบ <variable>HttpFactory
                     </variable>
                     </variable> แทน</p>
 
@@ -913,8 +927,8 @@ public async Task Test()
             <div class="ms-4">
                 <h6 class="sub-header">การทดสอบ EF Core</h6>
 
-                <p>การ Mock EF Core นั้นจะแบ่งได้เป็นสองแบบ คือ แบบใช้ EF Core จริงๆ กับแบบที่ใช้ EF Core เรียก Store
-                    Procedure </p>
+                <p>การ Mock EF Core นั้นจะแบ่งได้เป็นสองแบบ คือการใช้ .Procedrue กับแบบที่ใช้ .CustomSqlQueryAsync
+                    ในการเรียก Store Procedure </p>
 
                 <pre>
 <code class="language-csharp">
@@ -1024,6 +1038,23 @@ IConfiguration configuration = new ConfigurationBuilder()
     .Build();
 
 var handler = new ThaiBMACalculationService(..., configuration, ...);
+</code>
+                </pre>
+            </div>
+            
+            <div class="ms-4">
+                <h6 class="sub-header">การทดสอบ Mapper</h6>
+
+                <pre>
+<code class="language-csharp">
+var mapProfile = new MapperConfiguration(options =>
+{
+    options.AddProfile(new WealthProfile());
+});
+
+mapper = mapProfile.CreateMapper();
+
+var handler = new WealthService(..., _mapper, ...);
 </code>
                 </pre>
             </div>
